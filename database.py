@@ -3,7 +3,8 @@ import sqlite3
 def ensure_connection(func):
 	def inner(*args, **kwargs):
 		with sqlite3.connect("database.db") as conn:
-			res = func(conn, *args, **kwargs)
+			kwargs["conn"] = conn
+			res = func(*args, **kwargs)
 		return res
 	return inner
 
