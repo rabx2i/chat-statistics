@@ -7,34 +7,35 @@ check_db()
 
 @bot.message_handler(commands = ["start"])
 def start(message):
-	keyboard_choice_language = types.ReplyKeyboardMarkup(True)
-	button_language_english = types.InlineKeyboardButton(text = "English")
-	button_language_russian = types.InlineKeyboardButton(text = "Russian")
-	button_language_spanish = types.InlineKeyboardButton(text = "Spanish")
-	button_language_turkish = types.InlineKeyboardButton(text = "Turkish")
-	keyboard_choice_language.add(button_language_english, button_language_russian)
-	keyboard_choice_language.add(button_language_spanish, button_language_turkish)
+	keyboard_choice_language = types.InlineKeyboardMarkup()
+	callback_button_language_english = types.InlineKeyboardButton(text = "English", callback_data = "english")
+	callback_button_language_russian = types.InlineKeyboardButton(text = "Русский", callback_data = "russian")
+	callback_button_language_spanish = types.InlineKeyboardButton(text = "Espanol", callback_data = "spanish")
+	callback_button_language_turkish = types.InlineKeyboardButton(text = "Türkçe", callback_data = "turkish")
+	keyboard_choice_language.add(callback_button_language_english, callback_button_language_russian)
+	keyboard_choice_language.add(callback_button_language_spanish, callback_button_language_turkish)
 	bot.send_message(message.from_user.id, "Hello! To begin with, it’s worth choosing the language we will speak.", reply_markup = keyboard_choice_language)
 
-@bot.message_handler(content_types = ["text"])
-def dialogue(message):
-	user_id = (message.from_user.id)
-	if message.text == "English":
-		language = "EN"
-		choice_language(user_id = user_id, language = language)
-		bot.send_message(message.from_user.id, "Hello! I’m a bot that will help you see the statistics in the chat. Just add me in him.")
-	if message.text == "Russian":
-		language = "RU"
-		choice_language(user_id = user_id, language = language)
-		bot.send_message(message.from_user.id, "Привет! Я бот, который поможет тебе посмотреть статистику в чате. Просто добавь меня в него.")
-	elif message.text == "Spanish":
-		language = "ES"
-		choice_language(user_id = user_id, language = language)
-		bot.send_message(message.from_user.id, "¡Hola! Soy un bot que te ayudará a ver las estadísticas en el chat. Solo agrégame en él.")
-	elif message.text == "Turkish":
-		language = "TR"
-		choice_language(user_id = user_id, language = language)
-		bot.send_message(message.from_user.id, "Merhaba! Ben sohbette istatistikleri görmenize yardımcı olacak bir botum. Sadece beni ekle.")
+@bot.callback_query_handler(func = lambda call: True)
+def language(call):
+	if call.message:
+		user_id = call.message.chat.id
+		if call.data == "english":
+			language = "EN"
+			choice_language(user_id = user_id, language = language)
+			bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = "Hello! I’m a bot that will help you see the statistics in the chat. Just add me in him.")
+		elif call.data == "russian":
+			language = "RU"
+			choice_language(user_id = user_id, language = language)
+			bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = "Привет! Я бот, который поможет тебе посмотреть статистику в чате. Просто добавь меня в него.")
+		elif call.data == "spanish":
+			language = "ES"
+			choice_language(user_id = user_id, language = language)
+			bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = "¡Hola! Soy un bot que te ayudará a ver las estadísticas en el chat. Solo agrégame en él.")
+		elif call.data == "turkish":
+			language = "TR"
+			choice_language(user_id = user_id, language = language)
+			bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = "Merhaba! Ben sohbette istatistikleri görmenize yardımcı olacak bir botum. Sadece beni ekle.")
 
 while True:
 	try:
